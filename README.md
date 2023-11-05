@@ -2,6 +2,7 @@
 This console app is very simple to demonstrate a couple of key ideas:
 1. Connecting to Dataverse using DefaultAzureCredential
 2. Adding setings from KeyVault
+
 Implementing these two ideas can easily eliminate the possiblity of passwords or app secrets making their way into source control.
 
 ## Why KeyVault?
@@ -28,6 +29,7 @@ I have found the easiest method to using the DefaultAzureCredential within Visua
 1. [Install the Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-windows?tabs=azure-cli)
 
 Once the Azure CLI is installed it is two easy steps:
+
 2. In Visual Studio open Developer PowerShell terminal.
 3. Enter `az login` and press Enter. This will open a browser window where you login and the close the window/tab.
 
