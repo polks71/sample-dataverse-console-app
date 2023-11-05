@@ -32,3 +32,6 @@ Once the Azure CLI is installed it is two easy steps:
 3. Enter `az login` and press Enter. This will open a browser window where you login and the close the window/tab.
 
 That is it. From then on in Visual Studio the DefaultAzureCredential will resolve to the credentials you entered. It is possible for it to pick up your Visual Studio credential but I ran into many times where the Visual Studio credential cache had timed out and didn't work. Using `az login` seems to work the best.
+
+# Note
+I can't take credit for the `GetDataverseToken` method that credit goes to [Dreaming in CRM](https://dreamingincrm.com/2021/11/16/connecting-to-dataverse-from-function-app-using-managed-identity/)

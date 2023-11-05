@@ -21,30 +21,34 @@ IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((context, config) =>
     {
         var settings = config.Build();
+        //Get a reference to the URL of Dataverse
         dataverseurl = settings.GetValue<string>("dataverseUrl");
-        if (!context.HostingEnvironment.IsDevelopment())
-        {
-            //loads configuration settings from an Azure KeyVault instance
-            config.AddAzureKeyVault(new Uri(settings.GetValue<string>("keyvaulturl")), new DefaultAzureCredential());
-        }
-        else
-        {
-            config.AddUserSecrets(Assembly.GetExecutingAssembly());
-        }
+
+
+        //loads configuration settings from an Azure KeyVault instance
+        config.AddAzureKeyVault(new Uri(settings.GetValue<string>("keyvaulturl")), new DefaultAzureCredential());
+
+        //If desired to use a local secrets file comment the KeyVault line and uncomment this line.
+        //config.AddUserSecrets(Assembly.GetExecutingAssembly());
+
 
     })
     .ConfigureServices((services) =>
     {
-
+        //Add the SampleWork class
         services.AddTransient<SampleWorker>();
+        //Add MemoryCache for Dataverse Token
         services.AddMemoryCache();
+        //Add a reference to the DefaultAzureCredential
         services.AddSingleton(new DefaultAzureCredential());
-
+        //Get a ServiceClient singleton
         services.AddSingleton<IOrganizationService, ServiceClient>(provider =>
         {
+
             var managedIdentity = provider.GetRequiredService<DefaultAzureCredential>();
             var environment = dataverseurl;
             var cache = provider.GetService<IMemoryCache>();
+            //create a new ServiceClient using the GetDatataverseToken method to manage the token.
             return new ServiceClient(
                     tokenProviderFunction: f => GetDataverseToken(environment, managedIdentity, cache),
                     instanceUrl: new Uri(environment),
@@ -61,7 +65,8 @@ await sampleworker.ExecuteAsync();
 
 async Task<string> GetDataverseToken(string environment, DefaultAzureCredential credential, IMemoryCache cache)
 {
-    var accessToken = await cache.GetOrCreateAsync(environment, async (cacheEntry) => {
+    var accessToken = await cache.GetOrCreateAsync(environment, async (cacheEntry) =>
+    {
         cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20);
         var token = (await credential.GetTokenAsync(new TokenRequestContext(new[] { $"{environment}/.default" })));
         return token;
